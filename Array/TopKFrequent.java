@@ -1,7 +1,9 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.List;
 
 /*
  * Declaring a PriorityQueue in java:
@@ -53,4 +55,37 @@ class TopKFrequent {
 
     return ans;
   }
+
+  public int[] topKFrequentOptimal(int[] nums, int k) {
+    // populate the map with frequency
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int num : nums) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+    }
+
+    List<List<Integer>> bucket = new ArrayList<>(nums.length + 1); // create the bucket taking freq as key
+    for (int i = 0; i <= nums.length; i++) {
+      bucket.add(new ArrayList<>());
+    }
+
+    for (int key : map.keySet()) { // populate the bucket
+      int freq = map.get(key);
+      bucket.get(freq).add(key);
+    }
+
+    int[] result = new int[k];
+    int idx = 0;
+
+    for (int i = nums.length; idx < k && i > 0; i--) {
+      for (int num : bucket.get(i)) { // as we are taking freq as key so the right most value will be the most
+                                      // frequent element
+        result[idx++] = num;
+        if (idx == k)
+          return result;
+      }
+    }
+
+    return result;
+  }
+
 }
